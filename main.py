@@ -1,5 +1,6 @@
 import pygame
 import os 
+import random
 
 WIDTH , HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -26,8 +27,8 @@ def draw_window(alive_cells, camera_x, camera_y, cell_size):
         pygame.draw.rect(WIN, WHITE, (screen_x, screen_y, cell_size, cell_size))
     
     # test crosshair
-    pygame.draw.rect(WIN, RED, (camera_x, camera_y, 1, 100))
-    pygame.draw.rect(WIN, RED, (camera_x, camera_y, 100, 1))
+    # pygame.draw.rect(WIN, RED, (camera_x, camera_y, 1, 100))
+    # pygame.draw.rect(WIN, RED, (camera_x, camera_y, 100, 1))
     
     
     pygame.display.update()
@@ -38,20 +39,76 @@ def main():
     run = True
     
     # initial data for the cells    
-    cell_size = 20
+    cell_size = 4
     camera_x = WIDTH // 2
     camera_y = HEIGHT // 2
     alive_cells = {(0, 0), (1, 1), (10, 2)}
+    
+    last_update_tick = pygame.time.get_ticks()
 
+    update_rate = 1000 #1000 ticks = 1 sec ig
+    
+    sec = 0
+    
     while run:
         clock.tick(FPS)
         
+        current_tick = pygame.time.get_ticks()
+        
+        if current_tick - last_update_tick >= update_rate:
+            
+            sec += 1
+            last_update_tick = current_tick
+
+    
+            # # this is for random fun :)
+            # for (x , y) in alive_cells:
+            #     new_alive_cells.add((x+random.randint(-10, 10), y+random.randint(-10, 10))) 
+            # alive_cells = new_alive_cells
+            # print(sec, 'has passed')
+            
+            sparse = {}
+            for (x, y) in alive_cells:
+                for i in range(-1, 2):
+                        for j in range(-1, 2):
+                            if i == 0 and j == 0:
+                                continue
+                            if (i + x, j + y) in sparse:
+                                sparse[(i+x, j+y)] += 1
+                                print("increment")
+                            else:
+                                sparse[(i+x, j+y)] = 1
+                                print("Adding new sp element")
+        
+            new_alive_cells = set()
+
+            for (x, y) in sparse:
+                if (x, y) in alive_cells:
+                    if sparse[(x, y)] == 2 or sparse[(x, y)] == 3:
+                        new_alive_cells.add((x, y))
+                elif sparse[(x, y)] == 3:
+                    new_alive_cells.add((x, y))
+
+                    print(new_alive_cells)
+            alive_cells = new_alive_cells
+            
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 
         draw_window(alive_cells, camera_x, camera_y, cell_size)
+        keys = pygame.key.get_pressed()
     
+        if keys[pygame.K_UP]:
+            camera_y -= 5
+        if keys[pygame.K_DOWN]:
+            camera_y += 5
+        if keys[pygame.K_RIGHT]:
+            camera_x += 5
+        if keys[pygame.K_LEFT]:
+            camera_x -= 5
+
     pygame.quit()
     
 if __name__ == "__main__":
