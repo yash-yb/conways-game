@@ -2,7 +2,7 @@ import pygame
 import os 
 import random
 
-WIDTH , HEIGHT = 900, 500
+WIDTH , HEIGHT = 1920, 1080
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Conway Set the Sail(DEV)")
 
@@ -11,11 +11,18 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 ORIGIN_DOT = (0, 0)
 
+# presets for playing around
+
+TOAD = {(0, 0), (1, 0), (2, 0), (-1, 1), (0, 1), (1, 1)}
+METHUSELAH = {(0, -1), (1, -1), (-1, 0), (0, 0), (0, 1)} #favourite
+ACORN = {(1, -1), (3, 0), (0, 1), (1, 1), (4, 1), (5, 1), (6, 1)}
+
 
 FPS = 60
 
 def draw_window(alive_cells, camera_x, camera_y, cell_size):
     WIN.fill(BLACK)
+    
     
     #for defining the co-ordinates wrt to camera
     for (x , y) in alive_cells:
@@ -38,15 +45,17 @@ def main():
     clock = pygame.time.Clock()
     run = True
     
-    # initial data for the cells    
-    cell_size = 4
+    
+    # initial data for the cells 
+    preset = ACORN
+    cell_size = 5
     camera_x = WIDTH // 2
     camera_y = HEIGHT // 2
-    alive_cells = {(0, -1), (1, 0), (-1, 1), (0, 1), (1, 1)}
-    
+    alive_cells = preset
+
     last_update_tick = pygame.time.get_ticks()
 
-    update_rate = 100 #1000 ticks = 1 sec ig
+    update_rate = 50 #1000 ticks = 1 sec ig
     
     sec = 0
     
@@ -60,8 +69,9 @@ def main():
             sec += 1
             last_update_tick = current_tick
 
+            new_alive_cells = set()
     
-            # # this is for random fun :)
+            # this is for random fun :)
             # for (x , y) in alive_cells:
             #     new_alive_cells.add((x+random.randint(-10, 10), y+random.randint(-10, 10))) 
             # alive_cells = new_alive_cells
@@ -78,8 +88,7 @@ def main():
                                 sparse[(i+x, j+y)] += 1
                             else:
                                 sparse[(i+x, j+y)] = 1
-        
-            new_alive_cells = set()
+    
             
             # making a state for alive_cells
 
@@ -100,14 +109,16 @@ def main():
         draw_window(alive_cells, camera_x, camera_y, cell_size)
         keys = pygame.key.get_pressed()
     
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
             camera_y -= 5
-        if keys[pygame.K_DOWN]:
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             camera_y += 5
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             camera_x += 5
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             camera_x -= 5
+        if keys[pygame.K_r]:
+            alive_cells = preset #to reset the pattern if lags or something :)
 
     pygame.quit()
     
