@@ -42,11 +42,11 @@ def main():
     cell_size = 4
     camera_x = WIDTH // 2
     camera_y = HEIGHT // 2
-    alive_cells = {(0, 0), (1, 1), (10, 2)}
+    alive_cells = {(0, -1), (1, 0), (-1, 1), (0, 1), (1, 1)}
     
     last_update_tick = pygame.time.get_ticks()
 
-    update_rate = 1000 #1000 ticks = 1 sec ig
+    update_rate = 100 #1000 ticks = 1 sec ig
     
     sec = 0
     
@@ -67,6 +67,7 @@ def main():
             # alive_cells = new_alive_cells
             # print(sec, 'has passed')
             
+            # analysing the space
             sparse = {}
             for (x, y) in alive_cells:
                 for i in range(-1, 2):
@@ -75,12 +76,12 @@ def main():
                                 continue
                             if (i + x, j + y) in sparse:
                                 sparse[(i+x, j+y)] += 1
-                                print("increment")
                             else:
                                 sparse[(i+x, j+y)] = 1
-                                print("Adding new sp element")
         
             new_alive_cells = set()
+            
+            # making a state for alive_cells
 
             for (x, y) in sparse:
                 if (x, y) in alive_cells:
@@ -89,7 +90,6 @@ def main():
                 elif sparse[(x, y)] == 3:
                     new_alive_cells.add((x, y))
 
-                    print(new_alive_cells)
             alive_cells = new_alive_cells
             
 
