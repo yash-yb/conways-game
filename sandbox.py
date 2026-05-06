@@ -167,7 +167,7 @@ def main_menu():
             WIN.blit(video_surface, (0, 0))
 
 
-        title_label = TITLE_FONT.render("CONWAY: THE AEON SIMULATOR", True, WHITE)
+        title_label = TITLE_FONT.render("CONWAY's Set the Sail", True, WHITE)
         WIN.blit(title_label, (WIDTH // 2 - title_label.get_width() // 2, HEIGHT // 2 - 80))
         
         start_button.draw(WIN)
